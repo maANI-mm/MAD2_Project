@@ -1,0 +1,894 @@
+#+TITLE: API docs
+#+AUTHOR: Santhana Krishnan S
+
+* Introduction
+This document describes the API for the end to end messaging application.
+
+** API Design
+*** API versioning
+The API is versioned using with URL path (/api/v1). The current version is v1.
+*** API authentication
+The API is authenticated using a JWT token. The token is passed in the Authorization header as a Bearer token.
+*** API response
+The API response is a JSON object. The response contains the following fields:
+- status: The status of the request. The value is either ok or error.
+- message: The error message. This field is present only if the status is error.
+
+* Config
+#+NAME: active_config
+#+BEGIN_SRC sh
+echo develop
+#+END_SRC
+
+** Base URL
+#+NAME: base_url
+#+BEGIN_SRC sh
+echo http://localhost:5000/api/v1
+#+END_SRC
+
+** API key
+#+NAME: api_key
+#+BEGIN_SRC sh
+echo eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImtyaXNobmFuIiwiZXhwIjoxNzA3MTcwMjg4LCJ1c2VyX2lkIjoxfQ.u9Hg5yIyY1D0y53NhJrBhJjsCk1Yyl94xIcdJZZl360 # krishnan # admin
+# echo eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImtyaXNobmFuIiwiZXhwIjoxNzA2NzI0MDA4fQ.31KUiPbimy6BYZaQosm0sr3cMvS_jTTrQzLYcTItk-k # santhanam # messenger
+#+END_SRC
+
+** User ID
+#+NAME: user_id
+#+BEGIN_SRC sh
+echo 1
+#+END_SRC
+
+** Message ID
+#+NAME: message_id
+#+BEGIN_SRC sh
+echo 1
+#+END_SRC
+
+** Role ID
+#+NAME: role_id
+#+BEGIN_SRC sh
+echo -1
+#+END_SRC
+** User role ID
+#+NAME: user_role_id
+#+BEGIN_SRC sh
+echo -1
+#+END_SRC
+** Access ID
+#+NAME: access_id
+#+BEGIN_SRC sh
+echo -1
+#+END_SRC
+* API
+** Status
+#+BEGIN_SRC restclient :var base_url=base_url
+GET :base_url/status
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "status": "ok"
+}
+
+// GET http://localhost:5000/api/v1/status
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Tue, 30 Jan 2024 18:35:57 GMT
+// Content-Type: application/json
+// Content-Length: 21
+// Connection: close
+// Request duration: 0.105538s
+#+END_SRC
+
+** User
+*** Create user
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key
+POST :base_url/users
+Authorization: Bearer :api_key
+Content-Type: application/json
+
+{
+  "username": "vidya",
+  "email": "c@c.com",
+  "password": "password"
+}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 4,
+  "username": "vidya",
+  "email": "c@c.com",
+  "active": true
+}
+
+// POST http://localhost:5000/api/v1/users
+// HTTP/1.1 201 CREATED
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Mon, 05 Feb 2024 20:09:33 GMT
+// Content-Type: application/json
+// Content-Length: 85
+// Access-Control-Allow-Origin: http://localhost:5173
+// Connection: close
+// Request duration: 0.042464s
+#+END_SRC
+
+*** List users
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key
+GET :base_url/users
+Authorization: Bearer :api_key
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+[
+  {
+    "id": 1,
+    "username": "krishnan",
+    "email": "b@a.com",
+    "active": true
+  },
+  {
+    "id": 2,
+    "username": "santhanam",
+    "email": "a@a.com",
+    "active": true
+  }
+]
+
+// GET http://localhost:5000/api/v1/users
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Mon, 05 Feb 2024 19:13:15 GMT
+// Content-Type: application/json
+// Content-Length: 230
+// Access-Control-Allow-Origin: http://localhost:5173
+// Connection: close
+// Request duration: 0.019220s
+#+END_SRC
+
+*** Get user
+#+BEGIN_SRC restclient :var base_url=base_url :var api_key=api_key id=user_id
+GET :base_url/user/1
+Authorization: Bearer :api_key
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 1,
+  "username": "krishnan",
+  "email": "b@a.com",
+  "active": false
+}
+
+// GET http://localhost:5000/api/v1/user/1
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Mon, 26 Feb 2024 14:47:16 GMT
+// Content-Type: application/json
+// Content-Length: 89
+// Access-Control-Allow-Origin: http://localhost:5173
+// Connection: close
+// Request duration: 0.008762s
+#+END_SRC
+
+*** Update user
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key id=user_id
+PUT :base_url/user/:id
+Authorization: Bearer :api_key
+Content-Type: application/json
+
+{
+  "username": "krishnan",
+  "password": "password",
+  "email": "b@a.com",
+  "active": true
+}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 1,
+  "username": "krishnan",
+  "email": "b@a.com",
+  "active": false
+}
+
+// PUT http://localhost:5000/api/v1/user/1
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Mon, 26 Feb 2024 14:47:10 GMT
+// Content-Type: application/json
+// Content-Length: 89
+// Access-Control-Allow-Origin: http://localhost:5173
+// Connection: close
+// Request duration: 0.042065s
+#+END_SRC
+
+*** Delete user
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key id=user_id
+DELETE :base_url/user/:id
+Authorization: Bearer :api_key
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 1,
+  "username": "santhanam2",
+  "email": "c@c.com",
+  "active": true
+}
+
+// DELETE http://localhost:5000/api/v1/user/1
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Tue, 30 Jan 2024 18:53:58 GMT
+// Content-Type: application/json
+// Content-Length: 90
+// Connection: close
+// Request duration: 0.041243s
+#+END_SRC
+
+** Message
+*** Create message
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key
+POST :base_url/messages
+Authorization: Bearer :api_key
+Content-Type: application/json
+
+
+{
+  "sender_id": 3,
+  "receiver_id": 1,
+  "text": "Hey admin"
+}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "message": {
+    "error": "Signature has expired"
+  }
+}
+
+// POST http://localhost:5000/api/v1/messages
+// HTTP/1.1 401 UNAUTHORIZED
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Mon, 05 Feb 2024 21:27:43 GMT
+// Content-Type: application/json
+// Content-Length: 60
+// Access-Control-Allow-Origin: http://localhost:5173
+// Connection: close
+// Request duration: 0.015667s
+#+END_SRC
+
+*** List messages
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key
+GET :base_url/messages?per_page=10&page=1
+Authorization: Bearer :api_key
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+[]
+
+// GET http://localhost:5000/api/v1/messages?per_page=10&page=1
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Mon, 05 Feb 2024 19:17:55 GMT
+// Content-Type: application/json
+// Content-Length: 3
+// Access-Control-Allow-Origin: http://localhost:5173
+// Connection: close
+// Request duration: 0.019691s
+#+END_SRC
+
+*** Get message
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key id=message_id
+GET :base_url/message/:id
+Authorization: Bearer :api_key
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 1,
+  "sender_id": 1,
+  "receiver_id": 2,
+  "text": "Hello world",
+  "timestamp": "2024-01-30 22:56:16"
+}
+
+// GET http://localhost:5000/api/v1/message/1
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Wed, 31 Jan 2024 17:13:14 GMT
+// Content-Type: application/json
+// Content-Length: 125
+// Connection: close
+// Request duration: 0.023710s
+#+END_SRC
+
+*** Update message
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key id=message_id
+PATCH :base_url/message/:id
+Authorization: Bearer :api_key
+Content-Type: application/json
+
+
+{
+  "sender_id": 1,
+  "receiver_id": 2,
+  "text": "Hello world #1"
+}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "message": {
+    "error": "Signature has expired"
+  }
+}
+
+// PATCH http://localhost:5000/api/v1/message/1
+// HTTP/1.1 401 UNAUTHORIZED
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Mon, 19 Feb 2024 15:23:39 GMT
+// Content-Type: application/json
+// Content-Length: 60
+// Access-Control-Allow-Origin: http://localhost:5173
+// Connection: close
+// Request duration: 0.006001s
+#+END_SRC
+
+*** Delete message
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key id=message_id
+DELETE :base_url/message/:id
+Authorization: Bearer :api_key
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 1,
+  "sender_id": 1,
+  "receiver_id": 2,
+  "text": "Hello world #1",
+  "timestamp": "2024-01-30 22:56:16"
+}
+
+// DELETE http://localhost:5000/api/v1/message/1
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Wed, 31 Jan 2024 17:13:20 GMT
+// Content-Type: application/json
+// Content-Length: 128
+// Connection: close
+// Request duration: 0.042227s
+#+END_SRC
+
+** Role
+*** Create role
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key
+POST :base_url/roles
+Authorization: Bearer :api_key
+Content-Type: application/json
+
+
+{
+  "name": "messenger",
+  "description": "A messenger role with CRUD access to message"
+}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 2,
+  "name": "messenger",
+  "description": "A messenger role with CRUD access to message"
+}
+
+// POST http://localhost:5000/api/v1/roles
+// HTTP/1.1 201 CREATED
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Mon, 05 Feb 2024 14:17:16 GMT
+// Content-Type: application/json
+// Content-Length: 108
+// Access-Control-Allow-Origin: http://localhost:5173
+// Connection: close
+// Request duration: 0.029947s
+#+END_SRC
+
+*** List roles
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key
+GET :base_url/roles
+Authorization: Bearer :api_key
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+[
+  {
+    "id": 1,
+    "name": "admin",
+    "description": "Admin role"
+  },
+  {
+    "id": 2,
+    "name": "individual",
+    "description": "Individual user"
+  },
+  {
+    "id": 3,
+    "name": "messenger",
+    "description": "A messenger role with CRUD access to message"
+  }
+]
+
+// GET http://localhost:5000/api/v1/roles
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Wed, 31 Jan 2024 16:47:47 GMT
+// Content-Type: application/json
+// Content-Length: 324
+// Connection: close
+// Request duration: 0.017758s
+#+END_SRC
+
+*** Get role
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key id=role_id
+GET :base_url/role/:id
+Authorization: Bearer :api_key
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 1,
+  "name": "admin",
+  "description": "Admin to have all access"
+}
+
+// GET http://localhost:5000/api/v1/role/1
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Tue, 30 Jan 2024 23:29:15 GMT
+// Content-Type: application/json
+// Content-Length: 84
+// Connection: close
+// Request duration: 0.026275s
+#+END_SRC
+
+*** Update role
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key id=role_id
+PUT :base_url/role/:id
+Authorization: Bearer :api_key
+Content-Type: application/json
+
+
+{
+  "name": "admin",
+  "description": "Admin role"
+}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 1,
+  "name": "admin",
+  "description": "Admin role"
+}
+
+// PUT http://localhost:5000/api/v1/role/1
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Tue, 30 Jan 2024 23:29:25 GMT
+// Content-Type: application/json
+// Content-Length: 70
+// Connection: close
+// Request duration: 0.051054s
+#+END_SRC
+
+*** Delete role
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key id=role_id
+DELETE :base_url/role/100000
+Authorization: Bearer :api_key
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 3,
+  "name": "group",
+  "description": "Group user"
+}
+
+// DELETE http://localhost:5000/api/v1/role/3
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Tue, 30 Jan 2024 23:29:40 GMT
+// Content-Type: application/json
+// Content-Length: 70
+// Connection: close
+// Request duration: 0.049240s
+#+END_SRC
+
+** User role
+*** Create user role
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key
+POST :base_url/user/roles
+Authorization: Bearer :api_key
+Content-Type: application/json
+
+
+{
+  "user_id": 2,
+  "role_id": 3
+}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 3,
+  "user_id": 2,
+  "role_id": 3
+}
+
+// POST http://localhost:5000/api/v1/user/roles
+// HTTP/1.1 201 CREATED
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Wed, 31 Jan 2024 16:47:33 GMT
+// Content-Type: application/json
+// Content-Length: 52
+// Connection: close
+// Request duration: 0.049391s
+#+END_SRC
+
+*** List user Roles
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key
+GET :base_url/user/roles
+Authorization: Bearer :api_key
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "message": {
+    "error": "User santhanam doesn't have access to GET /api/v1/user/roles"
+  }
+}
+
+// GET http://localhost:5000/api/v1/user/roles
+// HTTP/1.1 403 FORBIDDEN
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Wed, 31 Jan 2024 16:55:42 GMT
+// Content-Type: application/json
+// Content-Length: 99
+// Connection: close
+// Request duration: 0.020831s
+#+END_SRC
+
+*** Get user role
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key id=user_role_id
+GET :base_url/user/role/:id
+Authorization: Bearer :api_key
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 1,
+  "user_id": 1,
+  "role_id": 1
+}
+
+// GET http://localhost:5000/api/v1/user/role/1
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Tue, 30 Jan 2024 23:41:15 GMT
+// Content-Type: application/json
+// Content-Length: 52
+// Connection: close
+// Request duration: 0.024057s
+#+END_SRC
+
+*** Update user role
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key id=user_role_id
+PUT :base_url/user/role/:id
+Authorization: Bearer :api_key
+Content-Type: application/json
+
+
+{
+  "user_id": 1,
+  "role_id": 1
+}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 1,
+  "user_id": 1,
+  "role_id": 1
+}
+
+// PUT http://localhost:5000/api/v1/user/role/1
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Tue, 30 Jan 2024 23:41:27 GMT
+// Content-Type: application/json
+// Content-Length: 52
+// Connection: close
+// Request duration: 0.023882s
+#+END_SRC
+
+*** Delete user role
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key id=user_role_id
+DELETE :base_url/user/role/:id
+Authorization: Bearer :api_key
+#+END_SRC
+
+** Access
+*** Create access
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key
+POST :base_url/accesses
+Authorization: Bearer :api_key
+Content-Type: application/json
+
+
+{
+  "role_id": 2,
+  "resource": ".*/messages$"
+  "action": "read"
+}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "message": {
+    "error": "Bad Request"
+  }
+}
+
+// POST http://localhost:5000/api/v1/accesses
+// HTTP/1.1 400 BAD REQUEST
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Mon, 05 Feb 2024 14:17:59 GMT
+// Content-Type: application/json
+// Content-Length: 50
+// Access-Control-Allow-Origin: http://localhost:5173
+// Connection: close
+// Request duration: 0.008084s
+#+END_SRC
+
+*** List accesses
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key
+GET :base_url/accesses
+Authorization: Bearer :api_key
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+[
+  {
+    "id": 1,
+    "role_id": 1,
+    "resource": ".*",
+    "action": "create"
+  }
+]
+
+// GET http://localhost:5000/api/v1/accesses
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Mon, 05 Feb 2024 14:20:06 GMT
+// Content-Type: application/json
+// Content-Length: 108
+// Access-Control-Allow-Origin: http://localhost:5173
+// Connection: close
+// Request duration: 0.006958s
+#+END_SRC
+
+*** Get access
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key id=access_id
+GET :base_url/access/:id
+Authorization: Bearer :api_key
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC html
+<!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+<!-- GET http://localhost:5000/api/v1/access/-1 -->
+<!-- HTTP/1.1 404 NOT FOUND -->
+<!-- Server: Werkzeug/3.0.1 Python/3.11.6 -->
+<!-- Date: Wed, 31 Jan 2024 16:44:15 GMT -->
+<!-- Content-Type: text/html; charset=utf-8 -->
+<!-- Content-Length: 207 -->
+<!-- Connection: close -->
+<!-- Request duration: 0.011118s -->
+#+END_SRC
+
+*** Update access
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key id=access_id
+PUT :base_url/access/9
+Authorization: Bearer :api_key
+Content-Type: application/json
+
+
+{
+  "role_id": 3,
+  "resource": ".*/messages\b.*",
+  "action": "read"
+}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 9,
+  "role_id": 3,
+  "resource": ".*/messages\b.*",
+  "action": "read"
+}
+
+// PUT http://localhost:5000/api/v1/access/9
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Wed, 31 Jan 2024 17:18:52 GMT
+// Content-Type: application/json
+// Content-Length: 91
+// Connection: close
+// Request duration: 0.167263s
+#+END_SRC
+
+*** Delete  ccess
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key id=access_id
+DELETE :base_url/access/:id
+Authorization: Bearer :api_key
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC html
+<!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+<!-- DELETE http://localhost:5000/api/v1/access/ -->
+<!-- HTTP/1.1 404 NOT FOUND -->
+<!-- Server: Werkzeug/3.0.1 Python/3.11.6 -->
+<!-- Date: Wed, 31 Jan 2024 16:43:56 GMT -->
+<!-- Content-Type: text/html; charset=utf-8 -->
+<!-- Content-Length: 207 -->
+<!-- Connection: close -->
+<!-- Request duration: 0.013624s -->
+#+END_SRC
+
+** Auth
+*** Login
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key
+POST http://127.0.0.1:5000/login
+Content-Type: application/json
+
+
+{
+  "username": "krishnan",
+  "password": "password"
+}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImtyaXNobmFuIiwiZXhwIjoxNzA3MTcwMjg4LCJ1c2VyX2lkIjoxfQ.u9Hg5yIyY1D0y53NhJrBhJjsCk1Yyl94xIcdJZZl360",
+  "status": "ok",
+  "user_id": 1,
+  "username": "krishnan"
+}
+
+// POST http://127.0.0.1:5000/login
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Mon, 05 Feb 2024 21:28:08 GMT
+// Content-Type: application/json
+// Content-Length: 227
+// Access-Control-Allow-Origin: http://localhost:5173
+// Connection: close
+// Request duration: 0.013650s
+#+END_SRC
+
+** Celery
+*** Test - Add
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key
+GET http://127.0.0.1:5000/add/1/2
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "task_id": "724aa507-8410-4f88-b31a-5a8531ba172a"
+}
+
+// GET http://127.0.0.1:5000/add/1/2
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Mon, 26 Feb 2024 12:52:26 GMT
+// Content-Type: application/json
+// Content-Length: 56
+// Access-Control-Allow-Origin: http://localhost:5173
+// Connection: close
+// Request duration: 0.051524s
+#+END_SRC
+
+*** Test - Get
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key
+GET http://127.0.0.1:5000/task/724aa507-8410-4f88-b31a-5a8531ba172a
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "result": 3,
+  "status": "SUCCESS"
+}
+
+// GET http://127.0.0.1:5000/task/724aa507-8410-4f88-b31a-5a8531ba172a
+// HTTP/1.1 200 OK
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Mon, 26 Feb 2024 12:53:26 GMT
+// Content-Type: application/json
+// Content-Length: 41
+// Access-Control-Allow-Origin: http://localhost:5173
+// Connection: close
+// Request duration: 0.010394s
+#+END_SRC
+
+
+** Report
+*** Create Report
+#+BEGIN_SRC restclient :var base_url=base_url api_key=api_key
+POST :base_url/reports
+Content-Type: application/json
+
+
+{}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": 10,
+  "status": "PENDING",
+  "path": null,
+  "timestamp": "2024-02-26 14:22:51"
+}
+
+// POST http://localhost:5000/api/v1/reports
+// HTTP/1.1 201 CREATED
+// Server: Werkzeug/3.0.1 Python/3.11.6
+// Date: Mon, 26 Feb 2024 14:22:51 GMT
+// Content-Type: application/json
+// Content-Length: 100
+// Access-Control-Allow-Origin: http://localhost:5173
+// Connection: close
+// Request duration: 0.024433s
+#+END_SRC
